@@ -1,9 +1,11 @@
 <div class="board">
-    <table border>
+    <table class="mainTable" border>
         {% for row in grid %}
             <tr>
                 {% for cell in row %}
-                    <td width="50px" height="50px"><center>&nbsp; {{ cell }}&nbsp; </center></td>
+                    <td width="50px" height="50px" class="{{ (cell == 'o') ? 'blue' : 'red' }}"><center>
+                      <i class="fa {{ (cell == 'o') ? 'fa-circle-o' : '' }} {{ (cell == 'x') ? 'fa-times' : '' }}" aria-hidden="true"></i>
+                    </center></td>
                 {% endfor %}
             </tr>
         {% endfor %}

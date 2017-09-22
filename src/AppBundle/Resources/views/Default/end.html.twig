@@ -1,9 +1,11 @@
 {% extends 'AppBundle::layout.html.twig' %}
 {% block body %}
 
+<div class="container">
     {% include 'AppBundle:Board:board.html.twig' with grid %}
 
     end: {{ message }}<br/>
     <a href="{{ path('start') }}">start</a>
-{% endblock body %}
+</div>
 
+{% endblock body %}

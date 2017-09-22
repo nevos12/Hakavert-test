@@ -16,11 +16,29 @@ class Game
 
     private $currentPlayer;
 
+    /**
+     * @var boolean
+     */
+    private $vsComputer = false;
+
     const STATE_NEW = 0;
     const STATE_IN_PLAY = 1;
     const STATE_TIE = 2;
     const STATE_WON = 3;
 
+    /**
+     * Game Constructor
+     * @param boolean $vsComputer
+     */
+    public function __construct($vsComputer = false)
+    {
+        $this->vsComputer = $vsComputer;
+    }
+
+    /**
+     * @param  boolean $vsComputer
+     * @return void
+     */
     public function start()
     {
         $this->board = new Board();
@@ -35,6 +53,23 @@ class Game
     public function makeMove($row, $col)
     {
         $this->board->setSquare($row, $col, $this->currentPlayer);
+
+        $this->switchPlayer();
+    }
+
+    public function makeComputerMove()
+    {
+        if ($this->board->isFull()) {
+            return;
+        }
+
+        $emptyFields = $this->board->getEmptyFields();
+
+        $row = array_rand($emptyFields);
+        $col = array_rand($emptyFields[$row]);
+
+        $this->board->setSquare($row, $col, $this->currentPlayer);
+        
         $this->switchPlayer();
     }
 
@@ -131,6 +166,14 @@ class Game
         $data = json_decode($json, true);
         $this->board->loadBoard($data['grid']);
         $this->currentPlayer = $data['currentPlayer'];
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isVsComputer()
+    {
+        return $this->vsComputer;
     }
 
 }

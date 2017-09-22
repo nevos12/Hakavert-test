@@ -21,12 +21,20 @@ class GameModel
     private $game;
 
     /**
+     * @var boolean
+     */
+    private $vsComputer;
+
+    /**
      * GameModel constructor.
      * @param Session $session
      */
     public function __construct(Session $session)
     {
         $this->session = $session;
+
+        $this->vsComputer = $this->session->get('vsComputer', false);
+
         $this->loadGame();
         $this->storeGame();
     }
@@ -51,10 +59,9 @@ class GameModel
     private function loadGame()
     {
         $json = $this->session->get('game', $this->emptyGameJson());
-        $game = new Game();
+        $game = new Game($this->vsComputer);
         $game->unserialize($json);
-        $this->game = $game;
-        return $this->game;
+        return $this->game = $game;
     }
 
     private function storeGame()
@@ -62,15 +69,27 @@ class GameModel
         $this->session->set('game', $this->game->serialize());
     }
 
+    private function storeVsComputer($vsComputer)
+    {
+        $this->vsComputer = $vsComputer;
+        $this->session->set('vsComputer', $vsComputer);
+    }
+
     private function emptyGameJson()
     {
-        $game = new Game();
+        $game = new Game($this->vsComputer);
         $game->start();
         return $game->serialize();
     }
 
-    public function startGame()
+    /**
+     * @param  boolean $vsComputer
+     * @return void
+     */
+    public function startGame($vsComputer)
     {
+        $this->storeVsComputer($vsComputer);
+
         $this->game->start();
         $this->storeGame();
     }

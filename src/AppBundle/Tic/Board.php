@@ -79,6 +79,21 @@ class Board
         return true;
     }
 
+    public function getEmptyFields()
+    {
+        $emptyFields = [];
+
+        for ($i = 0; $i < 3; $i++) {
+            for ($j = 0; $j < 3 ; $j++) {
+                if(self::NOTHING == $this->getSquare($i, $j)) {
+                    $emptyFields[$i][$j] = 1;
+                }
+            }
+        }
+
+        return $emptyFields;
+    }
+
     public function loadBoard($grid)
     {
         $this->grid = $grid;
@@ -129,7 +144,7 @@ class Board
         if(self::NOTHING == $square) {
             return false;
         }
-        for($i = 1; $i < 3; $i++) {
+        for($i = 0; $i < 3; $i++) {
             if($square != $this->getSquare($i, $i)) {
                 return false;
             }
@@ -143,10 +158,12 @@ class Board
         if(self::NOTHING == $square) {
             return false;
         }
-        for($i = 1; $i >= 0; $i--) {
-            if($square != $this->getSquare($i, $i)) {
+        $y = 2;
+        for($x = 0; $x < 3; $x++) {
+            if($square != $this->getSquare($x, $y)) {
                 return false;
             }
+            $y--;
         }
         return true;
     }

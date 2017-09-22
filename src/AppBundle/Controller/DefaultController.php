@@ -3,8 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Tic\Game;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
@@ -15,9 +16,11 @@ class DefaultController extends Controller
         );
     }
 
-    public function startAction()
+    public function startAction(Request $request)
     {
-        $this->get('app.model.game')->startGame();
+        $vsComputer = !!$request->query->get('vsComputer', false);
+
+        $this->get('app.model.game')->startGame($vsComputer);
         $game = $this->get('app.model.game')->getGame();
 
         return $this->render(
@@ -33,12 +36,22 @@ class DefaultController extends Controller
         $game = $this->get('app.model.game')->getGame();
 
         if(!$game->isMoveLegal($row, $col)) {
+
             $messages []= 'illegal move';
         } else {
             $game->makeMove($row, $col);
             $this->get('app.model.game')->setGame($game);
             if($this->isGameOver($game)) {
                 return $this->redirectToRoute('end');
+            }
+
+            if($game->isVsComputer()) {
+                $game->makeComputerMove();
+                $this->get('app.model.game')->setGame($game);
+
+                if($this->isGameOver($game)) {
+                    return $this->redirectToRoute('end');
+                }
             }
         }
 
